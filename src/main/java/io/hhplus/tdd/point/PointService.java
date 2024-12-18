@@ -19,14 +19,15 @@ public class PointService {
 
     /**
      * 포인트 충전 비즈니스 로직
-     * @param userId    사용자 아이디
-     * @param amount    충전 포인트
-     * @return  UserPoint
+     *
+     * @param userId 사용자 아이디
+     * @param amount 충전 포인트
+     * @return UserPoint
      */
-    public UserPoint chargePoints(Long userId, Long amount){
+    public UserPoint chargePoints(Long userId, Long amount) {
 
         // 1. 아이디 및 충전 포인트 누락 확인
-        if (userId == null || amount == null){
+        if (userId == null || amount == null) {
             throw new IllegalArgumentException("사용자 아이디와 충전 포인트는 필수입니다.");
         }
 
@@ -41,11 +42,11 @@ public class PointService {
         }
 
         // 4. 충전 포인트가 음수인 경우
-        if (amount < 0){
+        if (amount < 0) {
             throw new IllegalArgumentException("충전 포인트는 음수가 될 수 없습니다.");
         }
         // 5. 충전 포인트가 0인 경우
-        if (amount == 0){
+        if (amount == 0) {
             throw new IllegalArgumentException("충전 포인트는 0일 수 없습니다.");
         }
 
@@ -66,8 +67,8 @@ public class PointService {
         long resultPoint = currentPoint.point() + amount;
 
         // 8. 충전 후 포인트 잔액이 최대치를 초과한 경우
-        if(resultPoint > MAX_POINTS){
-            throw new RuntimeException("충전 후 포인트 잔액이 "+MAX_POINTS+ "을 초과하면 실패한다.");
+        if (resultPoint > MAX_POINTS) {
+            throw new RuntimeException("충전 후 포인트 잔액이 " + MAX_POINTS + "을 초과하면 실패한다.");
         }
 
         // 포인트 업데이트
@@ -79,7 +80,14 @@ public class PointService {
         return updateUserPoint;
     }
 
-    public UserPoint usePoints(Long userId, Long amount){
+    /**
+     * 포인트 사용 비즈니스 로직
+     *
+     * @param userId 사용자 아이디
+     * @param amount 사용 포인트
+     * @return UserPoint
+     */
+    public UserPoint usePoints(Long userId, Long amount) {
         // 1. 사용자 아이디와 사용 포인트가 전달되지 않은 경우
         if (userId == null || amount == null) {
             throw new IllegalArgumentException("사용자 아이디와 사용 포인트는 필수입니다.");
@@ -130,5 +138,25 @@ public class PointService {
 
         // 11. 업데이트된 사용자 포인트 반환
         return updatedUserPoint;
+    }
+
+    public UserPoint getPoints(Long userId) {
+        // 1. 사용자 아이디가 null인 경우
+        if (userId == null) {
+            throw new IllegalArgumentException("사용자 아이디는 필수입니다.");
+        }
+
+        // 2. 사용자 아이디가 음수인 경우
+        if (userId < 0) {
+            throw new IllegalArgumentException("사용자 아이디는 음수가 될 수 없습니다.");
+        }
+
+        // 3. 사용자 아이디가 null인 경우
+        if (userId == 0) {
+            throw new IllegalArgumentException("사용자 아이디는 0일 수 없습니다.");
+        }
+
+        // 4. 사용자 포인트 조회
+        return userPointTable.selectById(userId);
     }
 }
