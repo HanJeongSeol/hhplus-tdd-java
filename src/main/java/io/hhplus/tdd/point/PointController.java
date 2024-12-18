@@ -56,6 +56,6 @@ public class PointController {
             @PathVariable long id,
             @RequestBody long amount
     ) {
-        return new UserPoint(0, 0, 0);
+        return pointService.usePoints(id, amount);
     }
 }
