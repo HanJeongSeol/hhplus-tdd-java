@@ -176,7 +176,7 @@ public class PointServiceTest {
 
     @Nested
     @DisplayName("포인트 사용 테스트")
-    class usePoints{
+    class UsePoints{
         @Test
         @DisplayName("사용자 아이디와 사용 포인트가 전달되지 않을 시 요청 실패.")
         void 사용자_아이디_사용_포인트_누락_실패() {
@@ -313,7 +313,7 @@ public class PointServiceTest {
     }
     @Nested
     @DisplayName("포인트 조회 테스트")
-    class getPoints {
+    class GetPoints {
         @Test
         @DisplayName("사용자 아이디가 전달되지 않을 시 포인트 조회 요청 실패.")
         void 포인트_조회_아이디_누락_실패() {
@@ -352,6 +352,51 @@ public class PointServiceTest {
             IllegalArgumentException exception = assertThrows(
                     IllegalArgumentException.class,
                     () -> pointService.getPoints(userId)
+            );
+            assertEquals("사용자 아이디는 0일 수 없습니다.", exception.getMessage());
+        }
+    }
+    @Nested
+    @DisplayName("포인트 내역 조회 테스트")
+    class GetPointHistories {
+        @Test
+        @DisplayName("사용자 아이디가 전달되지 않을 시 포인트 내역 조회 요청 실패.")
+        void 포인트_내역_조회_아이디_누락_실패() {
+            // given
+            final Long userId = null;
+
+            // when & then
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> pointService.getPointHistories(userId)
+            );
+            assertEquals("사용자 아이디는 필수입니다.", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("사용자 아이디가 음수인 경우 포인트 내역 조회 요청 실패.")
+        void 포인트_내역_조회_아이디_음수_실패() {
+            // given
+            final Long userId = -1L;
+
+            // when & then
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> pointService.getPointHistories(userId)
+            );
+            assertEquals("사용자 아이디는 음수가 될 수 없습니다.", exception.getMessage());
+        }
+
+        @Test
+        @DisplayName("사용자 아이디가 0인 경우 포인트 내역 조회 요청 실패.")
+        void 포인트_내역_조회_아이디_0_실패() {
+            // given
+            final Long userId = 0L;
+
+            // when & then
+            IllegalArgumentException exception = assertThrows(
+                    IllegalArgumentException.class,
+                    () -> pointService.getPointHistories(userId)
             );
             assertEquals("사용자 아이디는 0일 수 없습니다.", exception.getMessage());
         }

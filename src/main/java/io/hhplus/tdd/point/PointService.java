@@ -5,6 +5,8 @@ import io.hhplus.tdd.database.UserPointTable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PointService {
@@ -140,6 +142,11 @@ public class PointService {
         return updatedUserPoint;
     }
 
+    /**
+     * 사용자 포인트 조회
+     * @param userId   사용자 아이디
+     * @return  UserPoint
+     */
     public UserPoint getPoints(Long userId) {
         // 1. 사용자 아이디가 null인 경우
         if (userId == null) {
@@ -158,5 +165,31 @@ public class PointService {
 
         // 4. 사용자 포인트 조회
         return userPointTable.selectById(userId);
+    }
+
+    /**
+     * 사용자 포인트 내역 조회
+     *
+     * @param userId 사용자 ID
+     * @return List<PointHistory>
+     */
+    public List<PointHistory> getPointHistories(Long userId) {
+        // 1. 사용자 아이디가 전달되지 않은 경우
+        if (userId == null) {
+            throw new IllegalArgumentException("사용자 아이디는 필수입니다.");
+        }
+
+        // 2. 사용자 아이디가 음수인 경우
+        if (userId < 0) {
+            throw new IllegalArgumentException("사용자 아이디는 음수가 될 수 없습니다.");
+        }
+
+        // 3. 사용자 아이디가 0인 경우
+        if (userId == 0) {
+            throw new IllegalArgumentException("사용자 아이디는 0일 수 없습니다.");
+        }
+
+        // 4. 사용자 포인트 내역 조회
+        return pointHistoryTable.selectAllByUserId(userId);
     }
 }
