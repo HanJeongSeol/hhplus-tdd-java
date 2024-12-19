@@ -276,7 +276,7 @@ public class PointServiceIntegrationTest {
                     IllegalArgumentException.class,
                     () -> pointService.getPoints(userId)
             );
-            assertEquals("사용자 아이디는 0일 수 없습니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디는 0일 수 없습니다.");
         }
     }
 
@@ -337,7 +337,7 @@ public class PointServiceIntegrationTest {
                     IllegalArgumentException.class,
                     () -> pointService.getPointHistories(userId)
             );
-            assertEquals("사용자 아이디는 0일 수 없습니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디는 0일 수 없습니다.");
         }
     }
 }

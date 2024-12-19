@@ -54,7 +54,7 @@ public class PointServiceTest {
 
         @Test
         @DisplayName("사용자 아이디와 충전 포인트가 전달되지 않을 시 요청 실패.")
-        void 사용자_아이디_충전_포인트_누락_실패() {
+        void 사용자_아이디_혹은_충전_포인트가_null인_경우_IllegalArgumentException_발생() {
 
             // given - 사용자 아이디 및 포인트가 null인 경우
             final Long userId = null;
@@ -66,13 +66,12 @@ public class PointServiceTest {
                     () -> pointService.chargePoints(userId, amount)
             );
             // 예외 메시지 일치 확인
-            assertEquals("사용자 아이디와 충전 포인트는 필수입니다.", exception.getMessage());
-
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디와 충전 포인트는 필수입니다.");
         }
 
         @Test
         @DisplayName("사용자 아이디가 음수인 경우 실패")
-        void 사용자_아이디_음수_실패() {
+        void 사용자_아이디가_음수인_경우_IllegalArgumentException_발생() {
             // given
             final Long userId = -1L;
             final Long amount = 1000L;
@@ -82,13 +81,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.chargePoints(userId, amount)
             );
-            assertEquals("사용자 아이디는 음수가 될 수 없습니다.", exception.getMessage());
-
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디는 음수가 될 수 없습니다.");
         }
 
         @Test
         @DisplayName("사용자 아이디가 0인 경우 요청 실패")
-        void 사용자_아이디_0_실패() {
+        void 사용자_아이디가_0인_경우_IllegalArgumentException_발생() {
             // given
             final Long userId = 0L;
             final Long amount = 1000L;
@@ -102,8 +100,8 @@ public class PointServiceTest {
         }
 
         @Test
-        @DisplayName("포인트 충전 요청값이 음수인 경우 요청 실패")
-        void 충전_포인트_음수_실패() {
+        @DisplayName("충전 요청 금액에 음수인 경우 포인트 충전 실패")
+        void 충전_포인트가_음수인_경우_IllegalArgumentException_발생() {
             // given
             final Long userId = 1L;
             final Long amount = -1000L;
@@ -117,8 +115,8 @@ public class PointServiceTest {
         }
 
         @Test
-        @DisplayName("포인트 충전 요청값이 0인 경우 요청 실패")
-        void 충전_포인트_0_실패() {
+        @DisplayName("충전 요청 금액이 0인 경우 포인트 충전 실패")
+        void 충전_포인트가_0인_경우_IllegalArgumentException_발생() {
             // given
             final Long userId = 1L;
             final Long amount = 0L;
@@ -128,12 +126,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.chargePoints(userId, amount)
             );
-            assertEquals("충전 포인트는 0일 수 없습니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("충전 포인트는 0일 수 없습니다.");
         }
 
         @Test
-        @DisplayName("포인트 충전 요청값이 1,000 미만일 경우 요청 실패 ")
-        void 충전_포인트_최소값_미만_실패() {
+        @DisplayName("충전 요청 금액이 1,000 미만일 경우 요청 실패 ")
+        void 충전_포인트가_1000_미마인_경우_IllegalArgumentException_발생() {
             // given
             final Long userId = 1L;
             final Long amount = 999L;
@@ -143,12 +141,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.chargePoints(userId, amount)
             );
-            assertEquals("충전 포인트는 최소 1000 이상이어야 합니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("충전 포인트는 최소 1000 이상이어야 합니다.");
         }
 
         @Test
-        @DisplayName("포인트 충전 요청값이 1,000,000 초과인 경우 요청 실패")
-        void 충전_포인트_최대값_초과_실패() {
+        @DisplayName("충전 요청 금액이 1,000,000 초과인 경우 포인트 충전 실패")
+        void 충전_포인트가_1000000_초과인_경우_IllegalArgumentException_발생() {
             // given
             final Long userId = 1L;
             final Long amount = 1000001L;
@@ -158,12 +156,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.chargePoints(userId, amount)
             );
-            assertEquals("충전 포인트는 최대 1000000 이하여야 합니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("충전 포인트는 최대 1000000 이하여야 합니다.");
         }
 
         @Test
-        @DisplayName("충전 후 포인트 잔액이 1,000,000 초과인 경우 요청 실패")
-        void 충전_포인트_총합_초과_실패() {
+        @DisplayName("포인트 충전 후 잔액이 1,000,000 초과한 경우 충전 실패")
+        void 충전_후_잔액이_1000000_초과인_경우_RuntimeException_발생() {
             // given
             final Long userId = 1L;
             final Long amount = 200000L;
@@ -176,12 +174,12 @@ public class PointServiceTest {
                     RuntimeException.class,
                     () -> pointService.chargePoints(userId, amount)
             );
-            assertEquals("충전 후 포인트 잔액이 1000000을 초과하면 실패한다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("충전 후 포인트 잔액이 1000000을 초과하면 실패한다.");
         }
 
         @Test
         @DisplayName("요청 실패 시 포인트 충전 내역은 저장되지 않는다.")
-        void 충전_실패시_내역_저장_금지() {
+        void 포인트_충전_실페시_내역_저장을_하지_않는다() {
             // given
             final Long userId = 1L;
             final Long amount = 200_000L;
@@ -196,7 +194,7 @@ public class PointServiceTest {
             );
 
             // then
-            assertEquals("충전 후 포인트 잔액이 1000000을 초과하면 실패한다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("충전 후 포인트 잔액이 1000000을 초과하면 실패한다.");
             // 요청 실패 시 내역을 저장하지 않기 때문에 PointHistoryTable.insert() 메서드가 호출되면 안된다.
             verify(pointHistoryTable, times(0)).insert(userId, amount, TransactionType.CHARGE, System.currentTimeMillis());
 
@@ -232,7 +230,7 @@ public class PointServiceTest {
         }
         @Test
         @DisplayName("사용자 아이디와 사용 포인트가 전달되지 않을 시 요청 실패.")
-        void 사용자_아이디_사용_포인트_누락_실패() {
+        void 사용자_아이디_혹은_사용_포인트가_null인_경우_IllegalArgumentException_발생() {
             // given
             final Long userId = null;
             final Long amount = null;
@@ -242,12 +240,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.usePoints(userId, amount)
             );
-            assertEquals("사용자 아이디와 사용 포인트는 필수입니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디와 사용 포인트는 필수입니다.");
         }
 
         @Test
         @DisplayName("사용자 아이디가 음수인 경우 실패")
-        void 사용자_아이디_음수_실패() {
+        void 사용자_아이디가_음수인_경우_IllegalArgumentException_발생() {
             // given
             final Long userId = -1L;
             final Long amount = 1000L;
@@ -257,13 +255,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.chargePoints(userId, amount)
             );
-            assertEquals("사용자 아이디는 음수가 될 수 없습니다.", exception.getMessage());
-
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디는 음수가 될 수 없습니다.");
         }
 
         @Test
         @DisplayName("사용자 아이디가 0인 경우 요청 실패")
-        void 사용자_아이디_0_실패() {
+        void 사용자_아이디가_0인_경우_IllegalArgumentException_발생() {
             // given
             final Long userId = 0L;
             final Long amount = 1000L;
@@ -273,12 +270,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.chargePoints(userId, amount)
             );
-            assertEquals("사용자 아이디는 0일 수 없습니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디는 0일 수 없습니다.");
         }
 
         @Test
-        @DisplayName("포인트 사용 요청값이 0인 경우 요청 실패.")
-        void 사용_포인트_0_실패() {
+        @DisplayName("사용 요청 금액이 0인 경우 포인트 사용 실패")
+        void 사용_포인트가_0인_경우_IllegalArgumentException_발생() {
             // given
             final Long userId = 1L;
             final Long amount = 0L;
@@ -288,13 +285,13 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.usePoints(userId, amount)
             );
-            assertEquals("사용 포인트는 0보다 커야 합니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용 포인트는 0보다 커야 합니다.");
         }
 
 
         @Test
-        @DisplayName("포인트 사용 요청값이 1,000 미만일 경우 요청 실패.")
-        void 사용_포인트_최소값_미만_실패() {
+        @DisplayName("사용 요청 금액이 1,000 미만인 경우 포인트 사용 실패")
+        void 사용_포인트가_1000_미마인_경우_IllegalArgumentException_발생() {
             // given
             final Long userId = 1L;
             final Long amount = 999L;
@@ -304,12 +301,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.usePoints(userId, amount)
             );
-            assertEquals("사용 포인트는 최소 1000 이상이어야 합니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용 포인트는 최소 1000 이상이어야 합니다.");
         }
 
         @Test
-        @DisplayName("포인트 사용 요청값이 1,000,000 초과인 경우 요청 실패.")
-        void 사용_포인트_최대값_초과_실패() {
+        @DisplayName("사용 요청 금액이 1,000,000 초과인 경우 포인트 사용 실패")
+        void 사용_포인트가_1000000_초과인_경우_IllegalArgumentException_발생() {
             // given
             final Long userId = 1L;
             final Long amount = 1_000_001L;
@@ -319,12 +316,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.usePoints(userId, amount)
             );
-            assertEquals("사용 포인트는 최대 1000000 이하여야 합니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용 포인트는 최대 1000000 이하여야 합니다.");
         }
 
         @Test
-        @DisplayName("포인트 사용 요청값이 보유한 포인트 잔액을 초과하는 경우 요청 실패.")
-        void 사용_포인트_잔액_초과_실패() {
+        @DisplayName("포인트 사용 요청값이 보유한 포인트 잔액을 초과하는 경우 요청 실패")
+        void 포인트_사용_요청값이_보유_포인트를_초과한_경우_RuntimeException_발생() {
             // given
             final Long userId = 1L;
             final Long amount = 2000L;
@@ -338,12 +335,12 @@ public class PointServiceTest {
                     RuntimeException.class,
                     () -> pointService.usePoints(userId, amount)
             );
-            assertEquals("사용 포인트가 보유한 잔액을 초과할 수 없습니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용 포인트가 보유한 잔액을 초과할 수 없습니다.");
         }
 
         @Test
-        @DisplayName("요청 실패시 포인트 사용 내역이 저장되지 않는다.")
-        void 사용_실패시_내역_저장_금지() {
+        @DisplayName("요청 실패 시 포인트 사용 내역은 저장되지 않는다.")
+        void 포인트_충전_실페시_사용_저장을_하지_않는다() {
             // given
             final Long userId = 1L;
             final Long amount = 2000L;
@@ -359,7 +356,7 @@ public class PointServiceTest {
             );
 
             // then: PointHistoryTable.insert()가 호출되지 않아야 함
-            assertEquals("사용 포인트가 보유한 잔액을 초과할 수 없습니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용 포인트가 보유한 잔액을 초과할 수 없습니다.");
             verify(pointHistoryTable, times(0)).insert(userId, amount, TransactionType.USE, System.currentTimeMillis());
         }
 
@@ -387,8 +384,8 @@ public class PointServiceTest {
         }
 
         @Test
-        @DisplayName("사용자 아이디가 전달되지 않을 시 포인트 조회 요청 실패.")
-        void 포인트_조회_아이디_누락_실패() {
+        @DisplayName("사용자 아이디가 null인 경우 포인트 조회 실패")
+        void 사용자_아이디로_null값이_전달되면_IllegalArgumentException_발생() {
             // given
             final Long userId = null;
 
@@ -397,12 +394,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.getPoints(userId)
             );
-            assertEquals("사용자 아이디는 필수입니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디는 필수입니다.");
         }
 
         @Test
-        @DisplayName("사용자 아이디가 음수인 경우 포인트 조회 요청 실패.")
-        void 포인트_조회_아이디_음수_실패() {
+        @DisplayName("사용자 아이디가 음수인 경우 포인트 조회 실패")
+        void 사용자_아이디로_음수가_전달되면_IllegalArgumentException_발생() {
             // given
             final Long userId = -1L;
 
@@ -411,12 +408,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.getPoints(userId)
             );
-            assertEquals("사용자 아이디는 음수가 될 수 없습니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디는 음수가 될 수 없습니다.");
         }
 
         @Test
-        @DisplayName("사용자 아이디가 0인 경우 포인트 조회 요청 실패.")
-        void 포인트_조회_아이디_0_실패() {
+        @DisplayName("사용자 아이디가 0인 경우 포인트 내역 조회 요청 실패.")
+        void 사용자_아이디로_0이_전달되면_IllegalArgumentException_발생() {
             // given
             final Long userId = 0L;
 
@@ -425,7 +422,7 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.getPoints(userId)
             );
-            assertEquals("사용자 아이디는 0일 수 없습니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디는 0일 수 없습니다.");
         }
     }
     @Nested
@@ -459,8 +456,8 @@ public class PointServiceTest {
         }
 
         @Test
-        @DisplayName("사용자 아이디가 전달되지 않을 시 포인트 내역 조회 요청 실패.")
-        void 포인트_내역_조회_아이디_누락_실패() {
+        @DisplayName("사용자 아이디가 null인 경우 포인트 내역 조회 실패")
+        void 사용자_아이디로_null값이_전달되면_IllegalArgumentException_발생() {
             // given
             final Long userId = null;
 
@@ -469,12 +466,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.getPointHistories(userId)
             );
-            assertEquals("사용자 아이디는 필수입니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디는 필수입니다.");
         }
 
         @Test
-        @DisplayName("사용자 아이디가 음수인 경우 포인트 내역 조회 요청 실패.")
-        void 포인트_내역_조회_아이디_음수_실패() {
+        @DisplayName("사용자 아이디가 음수인 경우 포인트 내역 조회 실패")
+        void 사용자_아이디로_음수가_전달되면_IllegalArgumentException_발생() {
             // given
             final Long userId = -1L;
 
@@ -483,12 +480,12 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.getPointHistories(userId)
             );
-            assertEquals("사용자 아이디는 음수가 될 수 없습니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디는 음수가 될 수 없습니다.");
         }
 
         @Test
         @DisplayName("사용자 아이디가 0인 경우 포인트 내역 조회 요청 실패.")
-        void 포인트_내역_조회_아이디_0_실패() {
+        void 사용자_아이디로_0이_전달되면_IllegalArgumentException_발생() {
             // given
             final Long userId = 0L;
 
@@ -497,7 +494,7 @@ public class PointServiceTest {
                     IllegalArgumentException.class,
                     () -> pointService.getPointHistories(userId)
             );
-            assertEquals("사용자 아이디는 0일 수 없습니다.", exception.getMessage());
+            assertThat(exception.getMessage()).isEqualTo("사용자 아이디는 0일 수 없습니다.");
         }
     }
 }
